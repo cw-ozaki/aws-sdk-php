@@ -42,6 +42,8 @@ class RefreshableInstanceProfileCredentials extends AbstractRefreshableCredentia
         $this->client = $client ?: InstanceMetadataClient::factory();
     }
 
+    protected static $count = 1;
+
     /**
      * Attempt to get new credentials from the instance profile
      *
@@ -49,6 +51,7 @@ class RefreshableInstanceProfileCredentials extends AbstractRefreshableCredentia
      */
     protected function refresh()
     {
+        syslog(LOG_ERR, sprintf("refresh: %d, client: %s", self::$count++, print_r($this->client)));
         $credentials = $this->client->getInstanceProfileCredentials();
         // Expire the token 30 minutes early to pre-fetch before expiring.
         $this->credentials->setAccessKeyId($credentials->getAccessKeyId())
